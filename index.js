@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -16,6 +16,7 @@ const uri = `mongodb+srv://${process.env.BIKE_DB_USERNAME}:${process.env.BIKE_DB
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const bikeCategory = client.db("bikeInNeed").collection("categories");
+const bikeDetails = client.db("bikeInNeed").collection("details");
 
 app.get('/categories', async (req, res) => {
     const query = {};
@@ -23,7 +24,13 @@ app.get('/categories', async (req, res) => {
     res.send(cursor)
 })
 
-console.log(uri);
+// Bike Details 
+app.get('/categories/:category', async (req, res) => {
+    const details = req.params.category;
+    const query = {category : details};
+    const cursor = await bikeDetails.find(query).toArray();
+    res.send(cursor)
+})
 
 
 
