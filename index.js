@@ -17,14 +17,18 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 const bikeCategory = client.db("bikeInNeed").collection("category");
 
-
+app.get('/category', async (req, res) => {
+    const query = {};
+    const cursor = await bikeCategory.find(query).toArray();
+    res.send(cursor)
+})
 
 
 
 app.get('/', (req, res) => {
-  res.send('Bike In Need!')
+    res.send('Bike In Need!')
 })
 
 app.listen(port, () => {
-  console.log(`Bike In Need server running on: ${port}`)
+    console.log(`Bike In Need server running on: ${port}`)
 })
