@@ -15,13 +15,15 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.BIKE_DB_USERNAME}:${process.env.BIKE_DB_PASSWORD}@cluster0.k4gmzpi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-const bikeCategory = client.db("bikeInNeed").collection("category");
+const bikeCategory = client.db("bikeInNeed").collection("categories");
 
-app.get('/category', async (req, res) => {
+app.get('/categories', async (req, res) => {
     const query = {};
     const cursor = await bikeCategory.find(query).toArray();
     res.send(cursor)
 })
+
+console.log(uri);
 
 
 
