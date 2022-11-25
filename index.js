@@ -61,8 +61,15 @@ async function run() {
             res.send({ isSeller: user?.status === 'Seller' })
         })
 
+        // All Seller display on admin site 
         app.get('/users/seller', async (req, res) => {
             const query = {status: { $eq: 'Seller' } };
+            const cursor = await registerUser.find(query).toArray();
+            res.send(cursor);
+        })
+        // All Buyer display on admin site 
+        app.get('/users/buyer', async (req, res) => {
+            const query = {status: { $eq: 'Bayer' } };
             const cursor = await registerUser.find(query).toArray();
             res.send(cursor);
         })
