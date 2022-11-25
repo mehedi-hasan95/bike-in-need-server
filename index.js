@@ -21,6 +21,7 @@ async function run() {
     try {
         const bikeCategory = client.db("bikeInNeed").collection("categories");
         const bikeDetails = client.db("bikeInNeed").collection("details");
+        const registerUser = client.db("bikeInNeed").collection("users");
 
         app.get('/categories', async (req, res) => {
             const query = {};
@@ -35,6 +36,17 @@ async function run() {
             const cursor = await bikeDetails.find(query).toArray();
             res.send(cursor)
         })
+
+
+        // Register User Info 
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await registerUser.insertOne(user);
+            res.send(result);
+        })
+
+
+
     }
     finally {
 
