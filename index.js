@@ -61,6 +61,11 @@ async function run() {
             res.send({ isSeller: user?.status === 'Seller' })
         })
 
+        app.get('/users/seller', async (req, res) => {
+            const query = {status: { $eq: 'Seller' } };
+            const cursor = await registerUser.find(query).toArray();
+            res.send(cursor);
+        })
 
     }
     finally {
