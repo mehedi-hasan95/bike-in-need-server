@@ -45,6 +45,21 @@ async function run() {
             res.send(result);
         })
 
+        // Prevent all except admin
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await registerUser.findOne(query);
+            res.send({ isAdmin: user?.status === 'admin' })
+        })
+
+        // Prevent all except admin
+        app.get('/users/seller/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await registerUser.findOne(query);
+            res.send({ isSeller: user?.status === 'Seller' })
+        })
 
 
     }
