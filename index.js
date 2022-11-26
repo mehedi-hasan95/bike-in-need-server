@@ -70,10 +70,27 @@ async function run() {
             res.send(result);
         })
 
+        // Delete a Seller Product
+        app.delete('/seller/:id', async (req, res) => {
+            const doctor = req.params.id;
+            const query = { _id: ObjectId(doctor) }
+            const result = await bikeDetails.deleteOne(query);
+            console.log(result);
+            res.send(result);
+        })
+
         // Bike Details 
         app.get('/categories/:category', async (req, res) => {
             const details = req.params.category;
             const query = { category: details };
+            const cursor = await bikeDetails.find(query).toArray();
+            res.send(cursor)
+        })
+
+        // Get a Seller all products
+        app.get('/seller/products', async(req, res) => {
+            const email = req.query.email;
+            const query = { seller: email };
             const cursor = await bikeDetails.find(query).toArray();
             res.send(cursor)
         })
