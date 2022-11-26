@@ -45,10 +45,29 @@ async function run() {
         const bikeDetails = client.db("bikeInNeed").collection("details");
         const registerUser = client.db("bikeInNeed").collection("users");
 
+
+        // Midleware to Verify admin 
+        const verifyAdmin = async (req, res, next) => {
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await registerUser.findOne(query);
+            if (user.role !== 'admin') {
+                return res.status(403).send({ message: 'Unauthorize Access' });
+            }
+            next();
+        }
+
         app.get('/categories', async (req, res) => {
             const query = {};
             const cursor = await bikeCategory.find(query).toArray();
             res.send(cursor)
+        })
+
+        // Register User Info 
+        app.post('/products/add', async (req, res) => {
+            const user = req.body;
+            const result = await bikeDetails.insertOne(user);
+            res.send(result);
         })
 
         // Bike Details 
@@ -107,6 +126,17 @@ async function run() {
 
 
 
+        // JWT Token
+        app.get('/jwt', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const result = await registerUser.findOne(query);
+            if (result) {
+                const token = jwt.sign({ email }, process.env.ACCESS_KEY, { expiresIn: '1h' });
+                return res.send({ token })
+            }
+            res.status(403).send({ message: 'Unauthorize Access' })
+        })
 
         
 
