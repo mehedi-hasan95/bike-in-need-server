@@ -17,6 +17,28 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.BIKE_DB_USERNAME}:${process.env.BIKE_DB_PASSWORD}@cluster0.k4gmzpi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+// JWT 
+
+function verifyJWT(req, res, next) {
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send('unauthorized access');
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.ACCESS_KEY, function (err, decoded) {
+        if (err) {
+            return res.status(403).send({ message: 'forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+
+}
+
+
 async function run() {
     try {
         const bikeCategory = client.db("bikeInNeed").collection("categories");
@@ -73,6 +95,20 @@ async function run() {
             const cursor = await registerUser.find(query).toArray();
             res.send(cursor);
         })
+
+        // Delete a User
+        app.delete('/users/:id', async (req, res) => {
+            const doctor = req.params.id;
+            const query = { _id: ObjectId(doctor) }
+            const result = await registerUser.deleteOne(query);
+            console.log(result);
+            res.send(result);
+        })
+
+
+
+
+        
 
     }
     finally {
