@@ -177,6 +177,14 @@ async function run() {
             res.send(cursor)
         })
 
+        // Get a single purchase items
+        app.get('/purchase/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await purchase.findOne(query);
+            res.send(result);
+        })
+
 
         // JWT Token
         app.get('/jwt', async (req, res) => {
