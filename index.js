@@ -3,8 +3,11 @@ const app = express();
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
-
 require('dotenv').config();
+
+const stripe = require("stripe")(process.env.STRIPE_SK);
+
+
 const port = process.env.PORT || 5000;
 
 // Middleware 
@@ -184,6 +187,26 @@ async function run() {
             const result = await purchase.findOne(query);
             res.send(result);
         })
+
+        // Payment 
+        app.post("/create-payment-intent", async (req, res) => {
+            const items = req.body;
+            const price = items.sale;
+            const amount = price * 100;
+
+            
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
+                amount: amount,
+                "payment_method_types": [
+                    "card"
+                ]
+            });
+
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        });
 
 
         // JWT Token
