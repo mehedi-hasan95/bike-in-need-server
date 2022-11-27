@@ -48,6 +48,7 @@ async function run() {
         const bikeDetails = client.db("bikeInNeed").collection("details");
         const registerUser = client.db("bikeInNeed").collection("users");
         const purchase = client.db("bikeInNeed").collection("purchase");
+        const confirmPurchase = client.db("bikeInNeed").collection("confirmPurchase");
 
 
         // Midleware to Verify admin 
@@ -207,6 +208,14 @@ async function run() {
                 clientSecret: paymentIntent.client_secret,
             });
         });
+
+        // Confirm Purchase
+        app.post('/confirm-purchase', async(req, res) => {
+            const body = req.body;
+            const result = await confirmPurchase.insertOne(body);
+            res.send(result);
+        })
+    
 
 
         // JWT Token
