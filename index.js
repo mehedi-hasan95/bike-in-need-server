@@ -97,7 +97,7 @@ async function run() {
         })
 
         // Update a User
-        app.put('/seller/:id', async (req, res) => {
+        app.patch('/seller/:id', async (req, res) => {
             const seller = req.params.id;
             const query = { _id: ObjectId(seller) }
             const options = { upsert: true };
@@ -106,7 +106,7 @@ async function run() {
                     advertised: `advertised`
                 }
               };
-              const result = await registerUser.updateOne(query, updateDoc, options);
+              const result = await bikeDetails.updateOne(query, updateDoc, options);
             res.send(result);
         })
 
@@ -160,6 +160,14 @@ async function run() {
             const user = req.body;
             const result = await purchase.insertOne(user);
             res.send(result);
+        })
+
+        // A user Purchase Product
+        app.get('/purchase', async(req, res) => {
+            const email = req.query.email;
+            const query = { email };
+            const cursor = await purchase.find(query).toArray();
+            res.send(cursor)
         })
 
 
