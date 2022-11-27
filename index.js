@@ -96,6 +96,13 @@ async function run() {
             res.send(cursor)
         })
 
+        // Find advertised Items
+        app.get('/products/advertised', async(req, res) => {
+            const query = { advertised: { $eq: 'advertised' } };
+            const cursor = await bikeDetails.find(query).toArray();
+            res.send(cursor)
+        })
+
         // Update a User
         app.patch('/seller/:id', async (req, res) => {
             const seller = req.params.id;
