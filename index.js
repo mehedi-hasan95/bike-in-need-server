@@ -44,6 +44,7 @@ async function run() {
         const bikeCategory = client.db("bikeInNeed").collection("categories");
         const bikeDetails = client.db("bikeInNeed").collection("details");
         const registerUser = client.db("bikeInNeed").collection("users");
+        const purchase = client.db("bikeInNeed").collection("purchase");
 
 
         // Midleware to Verify admin 
@@ -95,6 +96,20 @@ async function run() {
             res.send(cursor)
         })
 
+        // Update a User
+        app.put('/seller/:id', async (req, res) => {
+            const seller = req.params.id;
+            const query = { _id: ObjectId(seller) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    advertised: `advertised`
+                }
+              };
+              const result = await registerUser.updateOne(query, updateDoc, options);
+            res.send(result);
+        })
+
 
         // Register User Info 
         app.post('/users', async (req, res) => {
@@ -134,13 +149,18 @@ async function run() {
 
         // Delete a User
         app.delete('/users/:id', async (req, res) => {
-            const doctor = req.params.id;
-            const query = { _id: ObjectId(doctor) }
+            const users = req.params.id;
+            const query = { _id: ObjectId(users) }
             const result = await registerUser.deleteOne(query);
-            console.log(result);
             res.send(result);
         })
 
+        // Register User Info 
+        app.post('/purchase', async (req, res) => {
+            const user = req.body;
+            const result = await purchase.insertOne(user);
+            res.send(result);
+        })
 
 
         // JWT Token
