@@ -56,7 +56,7 @@ async function run() {
             const decodedEmail = req.decoded.email;
             const query = { email: decodedEmail };
             const user = await registerUser.findOne(query);
-            if (user.role !== 'admin') {
+            if (user.status !== 'admin') {
                 return res.status(403).send({ message: 'Unauthorize Access' });
             }
             next();
@@ -159,7 +159,7 @@ async function run() {
         })
 
         // Delete a User
-        app.delete('/users/:id', async (req, res) => {
+        app.delete('/users/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const users = req.params.id;
             const query = { _id: ObjectId(users) }
             const result = await registerUser.deleteOne(query);
