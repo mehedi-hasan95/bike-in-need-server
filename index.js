@@ -31,7 +31,7 @@ function verifyJWT(req, res, next) {
 
     const token = authHeader.split(' ')[1];
 
-    jwt.verify(token, process.env.ACCESS_KEY, function (err, decoded) {
+    jwt.verify(token, process.env.JWT_KEY, function (err, decoded) {
         if (err) {
             return res.status(403).send({ message: 'forbidden access' })
         }
@@ -212,6 +212,15 @@ async function run() {
         // Confirm Purchase
         app.post('/confirm-purchase', async(req, res) => {
             const body = req.body;
+            const id = body.serviceId
+            const query = {_id: ObjectId(id)}
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                  sold: true,
+                }
+              };
+            const update = await bikeDetails.updateOne(query, updateDoc, options);
             const result = await confirmPurchase.insertOne(body);
             res.send(result);
         })
@@ -224,7 +233,7 @@ async function run() {
             const query = { email: email };
             const result = await registerUser.findOne(query);
             if (result) {
-                const token = jwt.sign({ email }, process.env.ACCESS_KEY, { expiresIn: '1h' });
+                const token = jwt.sign({ email }, process.env.JWT_KEY, { expiresIn: '1h' });
                 return res.send({ token })
             }
             res.status(403).send({ message: 'Unauthorize Access' })
