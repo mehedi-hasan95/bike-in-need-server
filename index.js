@@ -80,7 +80,6 @@ async function run() {
             const doctor = req.params.id;
             const query = { _id: ObjectId(doctor) }
             const result = await bikeDetails.deleteOne(query);
-            console.log(result);
             res.send(result);
         })
 
@@ -212,15 +211,6 @@ async function run() {
         // Confirm Purchase
         app.post('/confirm-purchase', async(req, res) => {
             const body = req.body;
-            const id = body.serviceId
-            const query = {_id: ObjectId(id)}
-            const options = { upsert: true };
-            const updateDoc = {
-                $set: {
-                  sold: true,
-                }
-              };
-            const update = await bikeDetails.updateOne(query, updateDoc, options);
             const result = await confirmPurchase.insertOne(body);
             res.send(result);
         })
